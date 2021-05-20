@@ -1,18 +1,11 @@
 use cstr::cstr;
 use qmetaobject::*;
+use midiprog::*;
 
 qrc!(my_resource,
     "midiprog/qml" {
         "qml/main.qml",
         "qml/ju-2/PG300.qml",
-        "qml/ju-2/PG300Slider.qml",
-        "qml/ju-2/PG300LFO.qml",
-        "qml/ju-2/PG300DCO.qml",
-        "qml/ju-2/PG300VCA.qml",
-        "qml/ju-2/PG300VCF.qml",
-        "qml/ju-2/PG300ENV.qml",
-        "qml/ju-2/PG300Chorus.qml",
-        "qml/ju-2/PG300Bender.qml",
     },
 );
 
@@ -32,6 +25,15 @@ struct ParameterHandler{
 }
 
 fn main() {
+
+    let mut i = midiprog::lib::interpreter::Interpreter::new();
+    i.run_commands_str(&[
+        "midiconfig data/midi.json".to_owned(),
+        "config data/ju-2.json".to_owned(),
+        "synth ju-2".to_owned(),
+    ]).unwrap();
+
+
     my_resource();
     qml_register_type::<ParameterHandler>(cstr!("ParameterHandler"), 1, 0, cstr!("ParameterHandler"));
 
