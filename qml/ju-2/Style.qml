@@ -1,5 +1,0 @@
-pragma Singleton
-
-QtObject {
-    
-}
