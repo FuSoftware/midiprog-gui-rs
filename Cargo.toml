@@ -10,4 +10,5 @@ edition = "2018"
 midiprog = { git = "https://github.com/FuSoftware/midiprog-rs" }
 qmetaobject = "*"
 cstr = "*"
+json = "*"
 

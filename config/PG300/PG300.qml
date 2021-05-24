@@ -467,12 +467,8 @@ ApplicationWindow  {
                 }
             }
         }
-
-        ParameterHandler {
-            id: param_handler
-            sysex_config: "ju-2.json"
-        }
         
+        /* Main Layout */
         ColumnLayout {
             RowLayout {
                 PG300DCO {}

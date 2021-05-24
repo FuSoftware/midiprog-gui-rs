@@ -281,7 +281,7 @@ checksum = "b16bd47d9e329435e309c58469fe0791c2d0d1ba96ec0954152a5ae2b04387dc"
 [[package]]
 name = "midiprog"
 version = "0.1.0"
-source = "git+https://github.com/FuSoftware/midiprog-rs#a0378c91daedb148cabc23025a422e6fb7d5368d"
+source = "git+https://github.com/FuSoftware/midiprog-rs#a2366cec1f132cf193c5ca6a24a1909a146aae9e"
 dependencies = [
  "derive_more",
  "json",
@@ -359,9 +359,9 @@ dependencies = [
 
 [[package]]
 name = "qmetaobject"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a76ec645d90072a2000911d064f8e130954d1fa2371f33da2742b542737adee8"
+checksum = "2d6459c7b9ee21eb3ced1b25b0b99ea0b1b3cad85628692fccc027764e06d3ab"
 dependencies = [
  "cpp",
  "cpp_build",
@@ -374,9 +374,9 @@ dependencies = [
 
 [[package]]
 name = "qmetaobject_impl"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bcb4d95359a0b8f518f7f93e2aa55511efbc7dc670e08b9546f674ba79e374eb"
+checksum = "a422c8bacbf922dd1282040eb6cc8f7c5b614135b2f49b5d5a4a0845a9de8396"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -388,15 +388,16 @@ name = "qml-test"
 version = "0.1.0"
 dependencies = [
  "cstr",
+ "json",
  "midiprog",
  "qmetaobject",
 ]
 
 [[package]]
 name = "qttypes"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "96505a75726c4ac6770edad5b225066f65171fe34f650d6607edea8125722a25"
+checksum = "41f3edac0e6ef7acd5a520ef32c376183a394be847fa0e99038d9128e28140fb"
 dependencies = [
  "cpp",
  "cpp_build",

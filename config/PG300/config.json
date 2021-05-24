@@ -1,3 +1,10 @@
 {
-    
+    "ui" : "PG300.qml",
+    "commands" : [
+        "midiconfig midi.json",
+        "config ju-2.json",
+        "synth ju-2",
+        "port 1 1",
+        "channel 0"
+    ]
 }
