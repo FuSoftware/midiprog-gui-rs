@@ -109,7 +109,11 @@ fn main() {
             }
 
             param_handler.interpreter.run_command(midiprog::lib::interpreter::InterpreterCommand::SysexList);
-            
+
+            for i in 0..40 {
+                param_handler.parameters.push(QVariant::from(0));
+            }
+
             qml_register_type::<ParameterHandler>(cstr!("ParameterHandler"), 1, 0, cstr!("ParameterHandler"));
 
             let mut engine = QmlEngine::new();

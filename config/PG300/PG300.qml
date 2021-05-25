@@ -24,6 +24,7 @@ ApplicationWindow  {
                 Layout.alignment: Qt.AlignCenter
                 horizontalAlignment: Text.AlignHCenter
                 text: parent.text
+                height: 25
             }
 
             Slider {
@@ -33,7 +34,8 @@ ApplicationWindow  {
                 to: parent.max
                 stepSize: parent.step
                 snapMode: Slider.SnapAlways
-                tickmarksEnabled: true
+                value: param_handler.parameters[paramId]
+                height: 200
 
                 onMoved: {
                     param_handler.update_param(parent.paramId, value)
