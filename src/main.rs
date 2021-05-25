@@ -56,6 +56,7 @@ struct ParameterHandler{
     }),
     
     update_param: qt_method!(fn update_param(&mut self, param: usize, value: usize) {
+        /*
         let r = self.interpreter.run_command(midiprog::lib::interpreter::InterpreterCommand::Sysex("ipr".to_owned(), vec![param, value]));
 
         match r {
@@ -67,6 +68,7 @@ struct ParameterHandler{
                 println!("{}", e);
             }
         }
+        */
     }),
 }
 

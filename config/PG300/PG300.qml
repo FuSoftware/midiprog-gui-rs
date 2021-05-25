@@ -1,5 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.15
+import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.14
 import ParameterHandler 1.0
@@ -32,6 +33,7 @@ ApplicationWindow  {
                 to: parent.max
                 stepSize: parent.step
                 snapMode: Slider.SnapAlways
+                tickmarksEnabled: true
 
                 onMoved: {
                     param_handler.update_param(parent.paramId, value)

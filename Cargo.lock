@@ -57,9 +57,9 @@ checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
 
 [[package]]
 name = "cc"
-version = "1.0.67"
+version = "1.0.68"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e3c69b077ad434294d3ce9f1f6143a2a4b89a8a2d54ef813d85003a4fd1137fd"
+checksum = "4a72c244c1ff497a746a7e1fb3d14bd08420ecda70c8f25c7112f2781652d787"
 
 [[package]]
 name = "cfg-if"
@@ -281,7 +281,7 @@ checksum = "b16bd47d9e329435e309c58469fe0791c2d0d1ba96ec0954152a5ae2b04387dc"
 [[package]]
 name = "midiprog"
 version = "0.1.0"
-source = "git+https://github.com/FuSoftware/midiprog-rs#a2366cec1f132cf193c5ca6a24a1909a146aae9e"
+source = "git+https://github.com/FuSoftware/midiprog-rs#078265e71772a292c2a7f583c3aa748a5287cc5f"
 dependencies = [
  "derive_more",
  "json",
