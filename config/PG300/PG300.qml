@@ -9,7 +9,7 @@ ApplicationWindow  {
     width: 1280
     height: 960
     visible: true
-    title: qsTr("Hello World")
+    title: qsTr("PG-300")
 
     Item {
         /* Main Slider */

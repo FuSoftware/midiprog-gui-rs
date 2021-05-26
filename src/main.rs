@@ -56,7 +56,6 @@ struct ParameterHandler{
     }),
     
     update_param: qt_method!(fn update_param(&mut self, param: usize, value: usize) {
-        /*
         let r = self.interpreter.run_command(midiprog::lib::interpreter::InterpreterCommand::Sysex("ipr".to_owned(), vec![param, value]));
 
         match r {
@@ -68,12 +67,11 @@ struct ParameterHandler{
                 println!("{}", e);
             }
         }
-        */
     }),
 }
 
 fn main() {
-    let cfg = Config::from_file("config/PG300/config.json");
+    let cfg = Config::from_file("config/DW8P/config.json");
 
     let mut param_handler = ParameterHandler {
         interpreter: midiprog::lib::interpreter::Interpreter::new(),
@@ -110,14 +108,11 @@ fn main() {
 
             param_handler.interpreter.run_command(midiprog::lib::interpreter::InterpreterCommand::SysexList);
 
-            for i in 0..40 {
-                param_handler.parameters.push(QVariant::from(0));
-            }
-
             qml_register_type::<ParameterHandler>(cstr!("ParameterHandler"), 1, 0, cstr!("ParameterHandler"));
 
             let mut engine = QmlEngine::new();
 
+            
             let c = std::cell::RefCell::new(param_handler);
             let o: QObjectPinned<ParameterHandler>;
             
@@ -125,7 +120,7 @@ fn main() {
                 o =  QObjectPinned::new(&c);
             }
 
-            engine.set_object_property("param_handler".into(), o);
+            engine.set_object_property("param_handler".into(), o);     
             engine.load_file(cfg.ui.into());
             engine.exec();
         }

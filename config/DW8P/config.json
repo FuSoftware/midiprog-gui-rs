@@ -1,0 +1,8 @@
+{
+    "ui" : "DW8P.qml",
+    "commands" : [
+        "midiconfig midi.json",
+        "config dw-8000.json",
+        "synth dw-8000"
+    ]
+}
