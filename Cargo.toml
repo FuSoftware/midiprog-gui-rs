@@ -11,4 +11,4 @@ midiprog = { git = "https://github.com/FuSoftware/midiprog-rs" }
 qmetaobject = "*"
 cstr = "*"
 json = "*"
-
+lazy_static = "*"

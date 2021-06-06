@@ -281,7 +281,7 @@ checksum = "b16bd47d9e329435e309c58469fe0791c2d0d1ba96ec0954152a5ae2b04387dc"
 [[package]]
 name = "midiprog"
 version = "0.1.0"
-source = "git+https://github.com/FuSoftware/midiprog-rs#0b077f0e5591cc9dad606802d22dbec2b5f0be18"
+source = "git+https://github.com/FuSoftware/midiprog-rs#96aa705fbc2bdfca4effba72b9c5e7cc30d1a7b1"
 dependencies = [
  "derive_more",
  "json",
@@ -389,6 +389,7 @@ version = "0.1.0"
 dependencies = [
  "cstr",
  "json",
+ "lazy_static",
  "midiprog",
  "qmetaobject",
 ]

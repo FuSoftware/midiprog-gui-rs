@@ -1,5 +1,6 @@
 {
     "ui" : "PG300.qml",
+    "parameters": 40,
     "commands" : [
         "midiconfig midi.json",
         "config ju-2.json",

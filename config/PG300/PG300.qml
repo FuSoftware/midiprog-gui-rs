@@ -11,6 +11,10 @@ ApplicationWindow  {
     visible: true
     title: qsTr("PG-300")
 
+    ParameterHandler {
+        id: param_handler
+    }
+
     Item {
         /* Main Slider */
         component PG300Slider: ColumnLayout {
@@ -479,6 +483,10 @@ ApplicationWindow  {
 
                 PG300VCF {
                     Layout.alignment: Qt.AlignBottom
+                }
+
+                Button {
+                    onClicked: param_handler.init("config/PG300/config.json")
                 }
             }
 

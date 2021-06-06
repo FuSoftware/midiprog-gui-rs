@@ -1,13 +1,16 @@
 use cstr::cstr;
 use qmetaobject::*;
-use std::path::Path;
+use std::{borrow::BorrowMut, path::Path, sync::Arc,  cell::RefCell, sync::Mutex};
 use midiprog::*;
-use json::*;
+
+#[macro_use]
+extern crate lazy_static;
 
 struct Config {
     ui: String,
     commands: Vec<String>,
     folder: String,
+    parameters: usize,
 }
 
 impl Config {
@@ -16,6 +19,7 @@ impl Config {
             ui: String::new(),
             commands: Vec::new(),
             folder: String::new(),
+            parameters: 0
         }
     }
 
@@ -31,6 +35,7 @@ impl Config {
         cfg.folder = folder.to_owned();
         let parsed = json::parse(s).expect("Couldn't parse the config file");
         cfg.ui = parsed["ui"].to_string();
+        cfg.parameters = parsed["parameters"].as_usize().unwrap();
 
         for val in parsed["commands"].members() {
             cfg.commands.push(val.to_string());
@@ -50,22 +55,16 @@ struct ParameterHandler{
     sysex_config_changed: qt_signal!(),
 
     interpreter: midiprog::lib::interpreter::Interpreter,
-
-    raw_command: qt_method!(fn raw_command(&mut self, command: String) {
-        self.interpreter.run_command_str(&command);
-    }),
     
     update_param: qt_method!(fn update_param(&mut self, param: usize, value: usize) {
         let r = self.interpreter.run_command(midiprog::lib::interpreter::InterpreterCommand::Sysex("ipr".to_owned(), vec![param, value]));
 
         match r {
-            Ok(()) => {
-
-            }
-
             Err(e) => {
                 println!("{}", e);
             }
+
+            _ => {}
         }
     }),
 }
@@ -73,11 +72,12 @@ struct ParameterHandler{
 impl ParameterHandler {
     pub fn update_param_value(&mut self, parameter: usize, value: u64) {
         self.parameters[parameter] = QVariant::from(value);
-    }
+        self.parameters_changed();
+    }   
 }
 
 fn main() {
-    let cfg = Config::from_file("config/DW8P/config.json");
+    let cfg = Config::from_file("config/PG300/config.json");
 
     let mut param_handler = ParameterHandler {
         interpreter: midiprog::lib::interpreter::Interpreter::new(),
@@ -89,11 +89,7 @@ fn main() {
     match std::env::set_current_dir(root) {
         Ok(()) => {
             for command in &cfg.commands {
-                match param_handler.interpreter.run_command_str(command) {
-                    Ok(()) => {
-                        
-                    }
-        
+                match param_handler.interpreter.run_command_str(command) {        
                     Err(e) => {
                         match e {
                             midiprog::lib::interpreter::InterpreterError::InterfaceError(e) => {
@@ -109,27 +105,28 @@ fn main() {
                             }
                         }
                     }
+
+                    _ => {}
                 }
             }
 
-            param_handler.interpreter.run_command(midiprog::lib::interpreter::InterpreterCommand::SysexList);
-            param_handler.interpreter.set_input_callback(|aliases, data| {
-                param_handler.update_param_value(0, 0);
-            });
+            while param_handler.parameters.len() < cfg.parameters {
+                param_handler.parameters.push(QVariant::from(0));
+            }
+
+            param_handler.interpreter.run_command(midiprog::lib::interpreter::InterpreterCommand::SysexList).unwrap();     
 
             qml_register_type::<ParameterHandler>(cstr!("ParameterHandler"), 1, 0, cstr!("ParameterHandler"));
 
-            let mut engine = QmlEngine::new();
-
-            
-            let c = std::cell::RefCell::new(param_handler);
+            let ph = Arc::new(RefCell::new(param_handler));
             let o: QObjectPinned<ParameterHandler>;
-            
+
             unsafe{
-                o =  QObjectPinned::new(&c);
+                o =  QObjectPinned::new(&ph);
             }
 
-            engine.set_object_property("param_handler".into(), o);     
+            let mut engine = QmlEngine::new();
+            engine.set_object_property("param_handler".into(), o);    
             engine.load_file(cfg.ui.into());
             engine.exec();
         }
