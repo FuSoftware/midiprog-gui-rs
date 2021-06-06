@@ -44,20 +44,17 @@ impl Config {
     }
 }
 
+
 #[derive(QObject, Default)]
-struct ParameterHandler{
+struct QInterpreter {
     base: qt_base_class!(trait QObject),
-    
-    parameters: qt_property!(QVariantList; NOTIFY parameters_changed),
-    parameters_changed: qt_signal!(),
 
-    sysex_config: qt_property!(QString; NOTIFY sysex_config_changed),
-    sysex_config_changed: qt_signal!(),
+    inner: midiprog::lib::interpreter::Interpreter,
 
-    interpreter: midiprog::lib::interpreter::Interpreter,
-    
+    parameter_changed: qt_signal!(parameter: usize, value: u64),
+
     update_param: qt_method!(fn update_param(&mut self, param: usize, value: usize) {
-        let r = self.interpreter.run_command(midiprog::lib::interpreter::InterpreterCommand::Sysex("ipr".to_owned(), vec![param, value]));
+        let r = self.inner.run_command(midiprog::lib::interpreter::InterpreterCommand::Sysex("ipr".to_owned(), vec![param, value]));
 
         match r {
             Err(e) => {
@@ -67,6 +64,17 @@ struct ParameterHandler{
             _ => {}
         }
     }),
+}
+
+#[derive(QObject, Default)]
+struct ParameterHandler{
+    base: qt_base_class!(trait QObject),
+    
+    parameters: qt_property!(QVariantList; NOTIFY parameters_changed),
+    parameters_changed: qt_signal!(),
+
+    sysex_config: qt_property!(QString; NOTIFY sysex_config_changed),
+    sysex_config_changed: qt_signal!(),
 }
 
 impl ParameterHandler {
@@ -80,7 +88,10 @@ fn main() {
     let cfg = Config::from_file("config/PG300/config.json");
 
     let mut param_handler = ParameterHandler {
-        interpreter: midiprog::lib::interpreter::Interpreter::new(),
+        ..Default::default()
+    };
+
+    let mut interpreter = QInterpreter {
         ..Default::default()
     };
 
@@ -89,7 +100,7 @@ fn main() {
     match std::env::set_current_dir(root) {
         Ok(()) => {
             for command in &cfg.commands {
-                match param_handler.interpreter.run_command_str(command) {        
+                match interpreter.inner.run_command_str(command) {        
                     Err(e) => {
                         match e {
                             midiprog::lib::interpreter::InterpreterError::InterfaceError(e) => {
@@ -114,19 +125,36 @@ fn main() {
                 param_handler.parameters.push(QVariant::from(0));
             }
 
-            param_handler.interpreter.run_command(midiprog::lib::interpreter::InterpreterCommand::SysexList).unwrap();     
+            interpreter.inner.run_command(midiprog::lib::interpreter::InterpreterCommand::SysexList).unwrap();   
 
+            let set_value = qmetaobject::queued_callback(move |(a, b)| {
+                let qptr = QPointer::from(&interpreter);
+                qptr.as_pinned().map(|this| {
+                    this.borrow().parameter_changed(a, b);
+                });
+            });
+
+            interpreter.inner.set_input_callback(move |s, d| {
+                set_value((d[1] as usize, d[2] as u64));
+            });
+
+            /* Custom Types */
             qml_register_type::<ParameterHandler>(cstr!("ParameterHandler"), 1, 0, cstr!("ParameterHandler"));
+            qml_register_type::<QInterpreter>(cstr!("QInterpreter"), 1, 0, cstr!("QInterpreter"));
 
             let ph = Arc::new(RefCell::new(param_handler));
+            let qi = Arc::new(RefCell::new(interpreter));
             let o: QObjectPinned<ParameterHandler>;
+            let i: QObjectPinned<QInterpreter>;
 
             unsafe{
                 o =  QObjectPinned::new(&ph);
+                i =  QObjectPinned::new(&qi);
             }
 
             let mut engine = QmlEngine::new();
-            engine.set_object_property("param_handler".into(), o);    
+            engine.set_object_property("param_handler".into(), o);
+            engine.set_object_property("midi_interpreter".into(), i);    
             engine.load_file(cfg.ui.into());
             engine.exec();
         }
