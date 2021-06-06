@@ -70,6 +70,12 @@ struct ParameterHandler{
     }),
 }
 
+impl ParameterHandler {
+    pub fn update_param_value(&mut self, parameter: usize, value: u64) {
+        self.parameters[parameter] = QVariant::from(value);
+    }
+}
+
 fn main() {
     let cfg = Config::from_file("config/DW8P/config.json");
 
@@ -107,6 +113,9 @@ fn main() {
             }
 
             param_handler.interpreter.run_command(midiprog::lib::interpreter::InterpreterCommand::SysexList);
+            param_handler.interpreter.set_input_callback(|aliases, data| {
+                param_handler.update_param_value(0, 0);
+            });
 
             qml_register_type::<ParameterHandler>(cstr!("ParameterHandler"), 1, 0, cstr!("ParameterHandler"));
 
